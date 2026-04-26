@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from analyzer import analyze_text
 from scoring import calculate_risk_score
 
 app = FastAPI()
@@ -7,7 +8,12 @@ app = FastAPI()
 def home():
     return {"message": "API is working 🚀"}
 
-@app.get("/risk")
-def get_risk():
-    score = calculate_risk_score()
-    return {"risk_score": score}
+@app.post("/analyze")
+def analyze_contract(text: str):
+    clauses = analyze_text(text)
+    score = calculate_risk_score(clauses)
+
+    return {
+        "risk_score": score,
+        "clauses": clauses
+    }
