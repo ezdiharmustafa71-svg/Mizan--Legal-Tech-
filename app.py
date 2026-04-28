@@ -19,13 +19,13 @@ def analyze_contract(text):
 
     for key, label in CLAUSES.items():
         if key in text:
-            results.append(f"⚠️ Detected: {label}")
+            results.append(f"Detected: {label}")
 
     if not results:
-        return "✅ No clauses detected."
+        return "No clauses detected."
 
     return "\n".join(results)
 
 if st.button("Analyze"):
     result = analyze_contract(user_input)
-    st.write(result)
+    st.text(result)
