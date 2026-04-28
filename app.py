@@ -1,22 +1,21 @@
-import streamlit as st
-
-st.title("Contract Analyzer")
-
-user_input = st.text_area("Paste your contract here")
+CLAUSES = {
+    "payment": "Payment terms",
+    "termination": "Termination clause",
+    "confidential": "Confidentiality clause",
+    "liability": "Liability limitation",
+    "governing law": "Governing law clause",
+    "data": "Data ownership clause"
+}
 
 def analyze_contract(text):
-    # تحليل بسيط مبدئي
-    if "payment" in text.lower():
-        return "⚠️ This contract includes payment terms."
-    elif "termination" in text.lower():
-        return "⚠️ This contract includes termination clauses."
-    else:
-        return "✅ No major risks detected (basic scan)."
+    text = text.lower()
+    results = []
 
-if st.button("Analyze"):
-    if user_input:
-        result = analyze_contract(user_input)
-        st.write("### Analysis Result:")
-        st.write(result)
-    else:
-        st.warning("Please enter contract text.")
+    for key, label in CLAUSES.items():
+        if key in text:
+            results.append(f"Detected: {label}")
+
+    if not results:
+        return "No clauses detected."
+
+    return "\n".join(results)
