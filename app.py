@@ -33,10 +33,27 @@ def analyze_contract(text):
 if st.button("Analyze"):
     content = user_input
 
-    # 🔍 Debug (مهم الآن فقط)
-    st.write("DEBUG TEXT:")
-    st.write(content)
+    # def analyze_contract(text):
+    text = text.lower()
+    results = []
 
-    result = analyze_contract(content)
-    st.write("### Results:")
-    st.write(result)
+    for key, label in CLAUSES.items():
+        if key in text:
+            risk = "Medium"
+
+            if key == "liability":
+                risk = "High"
+            elif key == "payment":
+                risk = "Medium"
+            elif key == "termination":
+                risk = "High"
+            elif key == "confidential":
+                risk = "Low"
+
+            results.append(f"⚠️ {label} — Risk: {risk}")
+
+    if not results:
+        return "✅ No clauses detected."
+
+    return "\n".join(results)
+    st.text(result)
