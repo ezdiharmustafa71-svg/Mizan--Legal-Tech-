@@ -1,18 +1,22 @@
 import streamlit as st
-import requests
 
-st.title("📄 Contract Analyzer")
+st.title("Contract Analyzer")
 
-user_input = st.text_area("Paste contract text here:")
+user_input = st.text_area("Paste your contract here")
+
+def analyze_contract(text):
+    # تحليل بسيط مبدئي
+    if "payment" in text.lower():
+        return "⚠️ This contract includes payment terms."
+    elif "termination" in text.lower():
+        return "⚠️ This contract includes termination clauses."
+    else:
+        return "✅ No major risks detected (basic scan)."
 
 if st.button("Analyze"):
     if user_input:
-    response = requests.post(
-    "http://127.0.0.1:8000/analyze",
-    params={"text": user_input}
-)
-
-result = response.json()
-
-st.write("### Result")
-st.write(result)
+        result = analyze_contract(user_input)
+        st.write("### Analysis Result:")
+        st.write(result)
+    else:
+        st.warning("Please enter contract text.")
