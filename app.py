@@ -1,16 +1,19 @@
 import streamlit as st
 
-st.title("Contract Analyzer")
+st.set_page_config(page_title="Contract Analyzer", layout="centered")
+
+st.title("📄 Contract Analyzer")
+st.caption("AI-powered contract clause detection (MVP version)")
 
 user_input = st.text_area("Paste your contract here")
 
 CLAUSES = {
-    "payment": "Payment terms",
-    "termination": "Termination clause",
-    "confidential": "Confidentiality clause",
-    "liability": "Liability limitation",
-    "governing law": "Governing law clause",
-    "data": "Data ownership clause"
+    "payment": "Payment Terms",
+    "termination": "Termination Clause",
+    "confidential": "Confidentiality Clause",
+    "liability": "Liability Limitation",
+    "governing law": "Governing Law Clause",
+    "data": "Data Ownership Clause"
 }
 
 def analyze_contract(text):
@@ -19,13 +22,20 @@ def analyze_contract(text):
 
     for key, label in CLAUSES.items():
         if key in text:
-            results.append(f"Detected: {label}")
+            results.append(f"⚠️ {label}")
 
     if not results:
-        return "No clauses detected."
+        return ["✅ No clauses detected"]
 
-    return "\n".join(results)
+    return results
 
-if st.button("Analyze"):
+if st.button("Analyze Contract"):
     result = analyze_contract(user_input)
-    st.text(result)
+
+    st.markdown("## 📊 Analysis Results")
+
+    for item in result:
+        if "⚠️" in item:
+            st.error(item)
+        else:
+            st.success(item)
