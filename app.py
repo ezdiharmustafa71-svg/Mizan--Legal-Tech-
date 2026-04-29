@@ -1,41 +1,74 @@
 import streamlit as st
+from openai import OpenAI
 
-st.set_page_config(page_title="Contract Analyzer", layout="centered")
+# =========================
+# 🔐 OpenAI Client Setup
+# =========================
+client = OpenAI(api_key="PUT_YOUR_API_KEY_HERE")
 
-st.title("📄 Contract Analyzer")
-st.caption("AI-powered contract clause detection (MVP version)")
+# =========================
+# 🧠 Prompt (System Brain)
+# =========================
+SYSTEM_PROMPT = """
+You are an expert legal contract analyst.
 
-user_input = st.text_area("Paste your contract here")
+Analyze the contract and return a structured, simple report for non-lawyers.
 
-CLAUSES = {
-    "payment": "Payment Terms",
-    "termination": "Termination Clause",
-    "confidential": "Confidentiality Clause",
-    "liability": "Liability Limitation",
-    "governing law": "Governing Law Clause",
-    "data": "Data Ownership Clause"
-}
+Rules:
+- Use simple language
+- Use bullet points
+- Highlight risks with ⚠️
+- Keep structure exactly
 
-def analyze_contract(text):
-    text = text.lower()
-    results = []
+Format:
 
-    for key, label in CLAUSES.items():
-        if key in text:
-            results.append(f"⚠️ {label}")
+## Key Clauses
+- ...
 
-    if not results:
-        return ["✅ No clauses detected"]
+## Payment Terms
+- ...
 
-    return results
+## Termination Clause
+- ...
 
-if st.button("Analyze Contract"):
-    result = analyze_contract(user_input)
+## Confidentiality
+- ...
 
-    st.markdown("## 📊 Analysis Results")
+## Key Risks ⚠️
+- ...
 
-    for item in result:
-        if "⚠️" in item:
-            st.error(item)
-        else:
-            st.success(item)
+## Governing Law
+- ...
+
+## Summary
+- 3–5 simple lines
+"""
+
+# =========================
+# 🤖 AI Function
+# =========================
+def analyze_contract(contract_text):
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": contract_text}
+        ]
+    )
+    return response.choices[0].message.content
+
+
+# =========================
+# 🖥️ UI (Streamlit)
+# =========================
+st.title("Mizan AI Contract Analyzer")
+
+contract = st.text_area("Paste your contract here:")
+
+if st.button("Analyze"):
+    if contract.strip():
+        with st.spinner("Analyzing contract with AI..."):
+            result = analyze_contract(contract)
+        st.markdown(result)
+    else:
+        st.warning("Please paste a contract first.")
